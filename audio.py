@@ -3,6 +3,7 @@ import os
 from pydub import AudioSegment
 import ml.parsing.textgrid_reader
 
+from pydub.playback import play
 
 def textgrid_path(path):
     """Return textgrid path for given wav file."""
@@ -22,7 +23,7 @@ def split_diphones(wav_path, outdir=None):
 
     wav = AudioSegment.from_file(wav_path)
     for (begin, end, diphone) in tg[u'phones']:
-        diphone = diphone.strip()
+        diphone = diphone.strip().replace("-","_")
         if len(diphone) > 0 and diphone[0] != ".":
             diphone_file = "{}_{}.wav".format(diphone, word)
             diphone_path = os.path.join(diphones_dir, diphone_file)
@@ -31,3 +32,5 @@ def split_diphones(wav_path, outdir=None):
             segment = wav[(begin * 1000):(end * 1000)]
             print("Saving {} ({} - {})".format(diphone_path, begin, end))
             segment.export(diphone_path, format="wav")
+        elif diphone[0] == ".":
+            print("skipping {}".format(diphone))

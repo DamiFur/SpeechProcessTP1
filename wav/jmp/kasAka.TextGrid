@@ -35,7 +35,7 @@ item []:
         intervals [6]:
             xmin = 0.7234324789594492 
             xmax = 0.7884076128538638 
-            text = "ka" 
+            text = ".ka" 
         intervals [7]:
             xmin = 0.7884076128538638 
             xmax = 0.9784841239479725 
