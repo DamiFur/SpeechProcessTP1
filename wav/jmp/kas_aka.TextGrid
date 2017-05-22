@@ -11,36 +11,40 @@ item []:
         name = "phones" 
         xmin = 0 
         xmax = 1.875 
-        intervals: size = 8 
+        intervals: size = 9 
         intervals [1]:
             xmin = 0 
-            xmax = 0.5016184874382207 
-            text = ".silence" 
+            xmax = 0.26179573025450065 
+            text = "." 
         intervals [2]:
-            xmin = 0.5016184874382207 
-            xmax = 0.5333189610790774 
+            xmin = 0.26179573025450065 
+            xmax = 0.27441301330516177 
             text = "-k" 
         intervals [3]:
-            xmin = 0.5333189610790774 
-            xmax = 0.5872097662685337 
+            xmin = 0.27441301330516177 
+            xmax = 0.3399187788107492 
             text = "ka" 
         intervals [4]:
-            xmin = 0.5872097662685337 
-            xmax = 0.6980309120109205 
+            xmin = 0.3399187788107492 
+            xmax = 0.4910639000795116 
             text = "as" 
         intervals [5]:
-            xmin = 0.6980309120109205 
-            xmax = 0.9048642166255432 
-            text = "sa" 
+            xmin = 0.4910639000795116 
+            xmax = 0.7298360475236354 
+            text = "sA" 
         intervals [6]:
-            xmin = 0.9048642166255432 
-            xmax = 1.0756219448538944 
-            text = "ak" 
+            xmin = 0.7298360475236354 
+            xmax = 1.0075384363988662 
+            text = "Ak" 
         intervals [7]:
-            xmin = 1.0756219448538944 
-            xmax = 1.1934688277157144 
+            xmin = 1.0075384363988662 
+            xmax = 1.1944035952681804 
             text = "ka" 
         intervals [8]:
-            xmin = 1.1934688277157144 
-            xmax = 1.875 
+            xmin = 1.1944035952681804 
+            xmax = 1.443557140427266 
             text = "a-" 
+        intervals [9]:
+            xmin = 1.443557140427266 
+            xmax = 1.875 
+            text = "." 
