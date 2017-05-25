@@ -5,28 +5,41 @@ import ConfigParser
 from pydub import AudioSegment
 from pydub.playback import play
 
-config = ConfigParser.ConfigParser()
-config.optionxform = str
-config.read("config.ini")
-voice = "JMP"
+
+def split_word_into_diphones(word):
+    """Get a list of diphones needed to synthesize the word."""
+    ans = ["-" + word[0]]
+
+    for i in range(len(word) - 1):
+        ans.append(word[i] + word[i + 1])
+
+    ans.append(word[-1] + "-")
+
+    return ans
 
 
-inputWord = sys.argv[1]
-outputFile = sys.argv[2]
+def synthesize(word, voice):
+    """Synthesize the word using diphones"""
+    config = ConfigParser.ConfigParser()
+    config.optionxform = str
+    config.read("config.ini")
 
-ans = ["-" + inputWord[0]]
+    word_diphones = split_word_into_diphones(word)
 
-for i in range(len(inputWord) - 1):
-    ans.append(inputWord[i] + inputWord[i + 1])
+    resp = AudioSegment.silent()
 
-ans.append(inputWord[-1] + "-")
+    for phono in word_diphones:
+        print(phono)
+        diphone = AudioSegment.from_wav(config.get(voice, phono))
+        resp = resp + diphone
 
+    return resp
 
-resp = AudioSegment.silent()
+if __name__ == "__main__":
+    word = sys.argv[1]
+    outfile = sys.argv[2]
 
-for phono in ans:
-    print(phono)
-    diphone = AudioSegment.from_wav(config.get(voice, phono))
-    resp = resp + diphone
+    resp = synthesize(word, "JMP")
 
-play(resp)
+    play(resp)
+
