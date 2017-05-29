@@ -23,7 +23,7 @@ with open(file_name, 'rb') as f:
         if i > limit:
             aux = p.split("value = ", 1)
             tmp = float(aux[1])
-            tmp = tmp * 1.2
+            tmp = tmp * 1.1
             ans += "points [" + aux[0] + "value = " + str(tmp) + "\n"
         else:
             if i != 0:
