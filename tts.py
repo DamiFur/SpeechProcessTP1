@@ -29,7 +29,6 @@ def synthesize(word, voice):
     resp = AudioSegment.silent()
 
     for phono in word_diphones:
-        print(phono)
         diphone = AudioSegment.from_wav(config.get(voice, phono))
         resp = resp + diphone
 
@@ -42,4 +41,5 @@ if __name__ == "__main__":
     resp = synthesize(word, "JMP")
 
     play(resp)
+    resp.export(outfile, format="wav")
 
