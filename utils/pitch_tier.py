@@ -23,6 +23,28 @@ def parse_pitch_tier(f):
     assert(len(ret["points"]) == ret["no_points"])
     return ret
 
+_header = """File type = \"ooTextFile\"
+Object class = \"PitchTier\"
+
+xmin = {}
+xmax = {}
+
+points: size = {}
+"""
+
+_point = """points[{}]:
+    number = {}
+    value = {}
+"""
+
+
+def convert_to_pitch_tier(info, outfile):
+    """Convert dict into pitch tier."""
+    outfile.write(_header.format(info["xmin"], info["xmax"], info["no_points"]))
+
+    for i, (time, value) in enumerate(info["points"]):
+        outfile.write(_point.format(i + 1, time, value))
+
 
 def _parse_header(f):
     f.readline()
