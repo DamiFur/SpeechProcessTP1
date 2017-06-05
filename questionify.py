@@ -21,9 +21,10 @@ def questionify_pitch(input_file):
         if "points: size" in line:
             points = int(line.split("= ", 1)[1])
             break
-
-    limit1 = points * 0.80
-    limit2 = points * 0.93
+    print(text)
+    print("*=*")
+    limit1 = max(0, points - 15)
+    limit2 = max(0, points - 5)
 
     pointvalues = text.split("points [")
 
@@ -34,9 +35,9 @@ def questionify_pitch(input_file):
         if i > limit1:
             aux = p.split("value = ", 1)
             tmp = float(aux[1])
-            tmp = tmp * constant
+            tmp = min(300, tmp * constant)
             if i < limit2:
-                constant += 0.02
+                constant += 0.04
             else:
                 constant -= 0.04
             ans += "points [" + aux[0] + "value = " + str(tmp) + "\n"
@@ -47,7 +48,7 @@ def questionify_pitch(input_file):
         i += 1
 
     output_file = tempfile.NamedTemporaryFile(suffix=".PitchTier")
-
+    print(ans)
     output_file.write(ans)
     output_file.flush()
 

@@ -19,6 +19,15 @@ config.optionxform = str
 config.read(os.path.join(proj_dir, "config.ini"))
 
 
+def _run_praat(*command):
+    praat_path = distutils.spawn.find_executable("praat")
+    command = [praat_path] + list(command)
+
+    print(" ".join(command))
+
+    subprocess.call(command)
+
+
 def get_pitch_tier(wav_path):
     """Return a new file with the pitch tier of the given wav.
 
@@ -35,24 +44,39 @@ def get_pitch_tier(wav_path):
         A tempfile with .PitchTier extension with the pitch
     """
     script_path = os.path.abspath(config.get("SCRIPTS", "extract_pitch"))
-    praat_path = distutils.spawn.find_executable("praat")
-    temp = tempfile.NamedTemporaryFile(suffix=".PitchTier")
+    temp = tempfile.NamedTemporaryFile(suffix=".PitchTier", delete=False)
     wav_path = os.path.abspath(wav_path)
 
-    command = [
-        praat_path,
+    _run_praat(
         script_path,
         wav_path,
         temp.name,
-        "50",
-        "300",
-    ]
-    print(command)
-    subprocess.call(command)
+        config.get("JMP", "hz_min"),
+        config.get("JMP", "hz_max"),
+    )
 
     temp.seek(0)
 
     return _parse_pitch_tier(temp)
+
+
+def replace_pitch_tier(wav_path, tier, output_path):
+    """Return a new file with the pitch tier replaced."""
+    script_path = os.path.abspath(config.get("SCRIPTS", "replace_pitch"))
+
+    pitch_tier = tempfile.NamedTemporaryFile(suffix=".PitchTier", delete=False)
+    _convert_to_pitch_tier(tier, pitch_tier)
+
+    wav_path = os.path.abspath(wav_path)
+
+    _run_praat(
+        script_path,
+        wav_path,
+        pitch_tier.name,
+        output_path,
+        config.get("JMP", "hz_min"),
+        config.get("JMP", "hz_max")
+    )
 
 
 def _parse_pitch_tier(f):
@@ -113,10 +137,12 @@ _point = """points[{}]:
 """
 
 
-def convert_to_pitch_tier(info, outfile):
+def _convert_to_pitch_tier(info, outfile):
     """Convert dict into pitch tier."""
     outfile.write(_header.format(info["xmin"],
                   info["xmax"], info["no_points"]))
 
-    for i, (time, value) in enumerate(info["points"]):
+    for i, (time, value) in enumerate(zip(info["time"], info["values"])):
         outfile.write(_point.format(i + 1, time, value))
+
+    outfile.flush()
