@@ -1,6 +1,6 @@
 """This file splits every diphone in each wav."""
 import glob
-from audio import split_diphones
+from utils.audio import split_diphones
 
 
 def main(wav_files):

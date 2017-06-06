@@ -1,8 +1,5 @@
 """Audio Helpers."""
 import os
-import subprocess
-import tempfile
-import distutils
 import ConfigParser
 from pydub import AudioSegment
 import ml.parsing.textgrid_reader
@@ -44,39 +41,3 @@ def split_diphones(wav_path, outdir=None):
             segment.export(diphone_path, format="wav")
         elif diphone[0] == ".":
             print("skipping {}".format(diphone))
-
-
-def get_pitch_tier(wav_path):
-    """Return a new file with the pitch tier of the given wav.
-
-    Parameters
-    ----------
-
-    wav_path: string
-        Path to the wav
-
-    Returns
-    -------
-
-    tempfile: NamedTemporaryFile
-        A tempfile with .PitchTier extension with the pitch
-    """
-    script_path = os.path.abspath(config.get("SCRIPTS", "extract_pitch"))
-    praat_path = distutils.spawn.find_executable("praat")
-    temp = tempfile.NamedTemporaryFile(suffix=".PitchTier")
-    wav_path = os.path.abspath(wav_path)
-
-    command = [
-        praat_path,
-        script_path,
-        wav_path,
-        temp.name,
-        "50",
-        "300",
-    ]
-    print(command)
-    subprocess.call(command)
-
-    temp.seek(0)
-
-    return temp
