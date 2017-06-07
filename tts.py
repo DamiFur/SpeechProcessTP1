@@ -11,7 +11,7 @@ config.optionxform = str
 config.read("config.ini")
 
 
-def split_word_into_diphones(word):
+def _split_word_into_diphones(word):
     """Get a list of diphones needed to synthesize the word."""
     ans = ["-" + word[0]]
 
@@ -24,7 +24,7 @@ def split_word_into_diphones(word):
 
 
 def _synthesize_non_question(word, voice):
-    word_diphones = split_word_into_diphones(word)
+    word_diphones = _split_word_into_diphones(word)
 
     resp = AudioSegment.silent(0)
 
@@ -46,10 +46,11 @@ def _synthesize_non_question(word, voice):
 
 
 def _find_peak_limits(span):
+    """Find where should the question pitch peak should be."""
     duration = span[-1]["limits"][1]
     if len(span) == 3:
         # una sola slaba
-        return 0, duration + 0.1
+        return 0, duration
     else:
         before_last = span[-5]["limits"][1]
         return before_last, duration + 0.1
@@ -63,6 +64,9 @@ def synthesize(word, voice):
         is_question = True
         word = word[:-1]
 
+    """
+    This synthesizes without the question peak
+    """
     resp, span = _synthesize_non_question(word, voice)
 
     if is_question:
