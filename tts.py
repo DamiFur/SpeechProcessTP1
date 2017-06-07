@@ -3,7 +3,6 @@ import sys
 import ConfigParser
 
 from pydub import AudioSegment
-from pydub.playback import play
 
 from utils.questionify import questionify
 
@@ -29,28 +28,47 @@ def _synthesize_non_question(word, voice):
 
     resp = AudioSegment.silent(0)
 
+    span = []
+    current_sec = 0
+
     for phono in word_diphones:
         diphone = AudioSegment.from_wav(config.get(voice, phono))
+
+        span.append({
+            'diphone': phono,
+            'limits': (current_sec, current_sec + diphone.duration_seconds)
+        })
+
+        current_sec += diphone.duration_seconds
         resp = resp + diphone
 
-    return resp
+    return resp, span
+
+
+def _find_peak_limits(span):
+    duration = span[-1]["limits"][1]
+    if len(span) == 3:
+        # una sola slaba
+        return 0, duration + 0.1
+    else:
+        before_last = span[-5]["limits"][1]
+        return before_last, duration + 0.1
 
 
 def synthesize(word, voice):
-    """Synthesize the word using diphones"""
+    """Synthesize the word using diphones."""
     is_question = False
 
     if word[-1] == '?':
         is_question = True
         word = word[:-1]
 
-    resp = _synthesize_non_question(word, voice)
+    resp, span = _synthesize_non_question(word, voice)
 
     if is_question:
-        limit1 = resp.duration_seconds * 0.8
-        limit2 = resp.duration_seconds * 1.1
+        limit1, limit2 = _find_peak_limits(span)
 
-        resp = questionify(resp, limit1, limit2, increase_factor=0.2)
+        resp = questionify(resp, limit1, limit2, increase_factor=0.35)
 
     return resp
 
@@ -61,5 +79,4 @@ if __name__ == "__main__":
 
     resp = synthesize(word, "JMP")
 
-    play(resp)
     resp.export(outfile, format="wav")

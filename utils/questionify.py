@@ -33,12 +33,12 @@ def _questionify_tier(tier, limit1, limit2, increase_factor=0.2):
 def questionify(audio_segment, limit1, limit2, increase_factor=0.2):
     """Questionify wav"""
     tmp_wav = tempfile.NamedTemporaryFile(suffix=".wav", delete=False)
-    audio_segment.export(tmp_wav.name, format=".wav")
-
     wav_path = tmp_wav.name
 
-    tier = get_pitch_tier(tmp_wav.name)
-    question_tier = _questionify_tier(tier, **kwargs)
+    audio_segment.export(tmp_wav.name, format="WAV")
+    tier = get_pitch_tier(wav_path)
+
+    question_tier = _questionify_tier(tier, limit1, limit2, increase_factor)
     replace_pitch_tier(wav_path, question_tier, wav_path)
 
     return AudioSegment.from_file(wav_path)
