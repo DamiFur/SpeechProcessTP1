@@ -7,6 +7,12 @@ from pitch_tier import get_pitch_tier, replace_pitch_tier
 
 
 def _questionify_tier(tier, limit1, limit2, increase_factor=0.2):
+
+    """Add a quadratic peak between limit1 and limit2.
+
+    The peak will be of (1+ increase_factor) * mu, where
+    mu is the mean pitch of the given tier
+    """
     time, values = tier["time"], tier["values"]
 
     """ Hice la cuenta de esto.."""
